@@ -1,0 +1,30 @@
+:global(.ant-form-item-label > label){
+    color: #fff !important;
+}
+
+.Main{
+    max-width: 80%;
+    margin: 0 auto;
+    position: relative;
+    padding-top: 30px;
+}
+
+.dataSource{
+    display: flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+}
+
+:global(#basic){
+    background-color: rgb(28, 36, 53);
+    display: block;
+    width: 320px;
+    padding:30px;
+    border: 1px solid rgba(255, 255, 255, 0.507);
+    border-radius: 6px;
+}
+
+:global(#basic > div){
+    width: 150px;
+}
+
