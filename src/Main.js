@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Rate, Form, Input, Select } from 'antd';
+import { Button, Rate, Form, Input, Select, Checkbox } from 'antd';
 import Style from './style/Main.module.css'
 
 const layout = {
@@ -10,6 +10,13 @@ const layout = {
 const tailLayout = {
     wrapperCol: { offset: 8, span: 16 },
 };
+
+const options = [
+    { label: '书籍', value: '0' },
+    { label: '电影', value: '1' },
+    { label: '电视剧', value: '2' },
+    { label: '动漫', value: '3' }
+];
 
 const { Option } = Select;
 
@@ -32,7 +39,7 @@ function Main() {
                             <Rate defaultValue={item.score} style={{ display: "block" }} onChange={(value) => { scoreAfter = value }} />
                         </div>
                         <Button type="default" onClick={() => { changeScore(item.code, scoreAfter) }}>评分</Button>
-                        <Button type="default" onClick={() => { deleteSource(item.code)}} style = {{marginLeft:5}}>删除</Button>
+                        <Button type="default" onClick={() => { deleteSource(item.code) }} style={{ marginLeft: 5 }}>删除</Button>
                     </div>
                 )
             })
@@ -86,9 +93,9 @@ function Main() {
     const deleteSource = (code) => {
         axios({
             method: "delete",
-            url: "http://192.168.50.83:4000/source/delete?",
-            params:{
-                code:code
+            url: "http://192.168.50.83:4000/source/delete",
+            params: {
+                code: code
             }
         }).then(res => {
             console.log(res)
@@ -97,9 +104,24 @@ function Main() {
     }
 
     const [addData, setAddData] = useState(false);
+
+    function onChange(checkedValues) {
+        console.log('checked = ', checkedValues);
+        axios({
+            method: "get",
+            url: "http://192.168.50.83:4000/getSource/type",
+            params: {
+                type: checkedValues
+            }
+        }).then(res => {
+            console.log(res)
+            getAll();
+        })
+    }
     return (
         <div className={Style.Main}>
             <Button style={{ position: "absolute", top: "30px", left: 0 }} onClick={() => { setAddData(!addData) }}>添加作品</Button>
+            <Checkbox.Group options={options} defaultValue={['Pear']} onChange={onChange} style = {{color:"#fff"}}/>
             <div className={Style.dataSource}>
                 {dataSource}
             </div>
@@ -146,7 +168,7 @@ function Main() {
                         </Form.Item>
 
                         <Form.Item {...tailLayout}>
-                            <Button type="primary" htmlType="submit" style={{ marginLeft:45 }}>
+                            <Button type="primary" htmlType="submit" style={{ marginLeft: 45 }}>
                                 添加
                             </Button>
                         </Form.Item>

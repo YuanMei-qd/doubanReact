@@ -28,3 +28,6 @@
     width: 150px;
 }
 
+:global(.ant-checkbox-wrapper){
+    color: #fff;
+}
