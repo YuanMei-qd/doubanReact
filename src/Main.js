@@ -106,7 +106,7 @@ function Main() {
     const [addData, setAddData] = useState(false);
 
     function onChange(checkedValues) {
-        console.log('checked = ', checkedValues);
+        // console.log('checked = ', checkedValues);
         axios({
             method: "get",
             url: "http://192.168.50.83:4000/getSource/type",
@@ -114,14 +114,28 @@ function Main() {
                 type: checkedValues
             }
         }).then(res => {
-            console.log(res)
-            getAll();
+            let list = res.data.data.map(item => {
+                let scoreAfter = item.score;
+                return (
+                    <div key={item.code} style={{ margin: "60px 50px 50px 0px", display: "inline-block", textAlign: "left" }}>
+                        <p>名称：{item.name}</p>
+                        <p>类型：{item.type === "0" ? "书籍" : item.type}</p>
+                        <div>
+                            <span>评分：{item.score}</span>
+                            <Rate defaultValue={item.score} style={{ display: "block" }} onChange={(value) => { scoreAfter = value }} />
+                        </div>
+                        <Button type="default" onClick={() => { changeScore(item.code, scoreAfter) }}>评分</Button>
+                        <Button type="default" onClick={() => { deleteSource(item.code) }} style={{ marginLeft: 5 }}>删除</Button>
+                    </div>
+                )
+            })
+            setDataSource(list)
         })
     }
     return (
         <div className={Style.Main}>
             <Button style={{ position: "absolute", top: "30px", left: 0 }} onClick={() => { setAddData(!addData) }}>添加作品</Button>
-            <Checkbox.Group options={options} defaultValue={['Pear']} onChange={onChange} style = {{color:"#fff"}}/>
+            <Checkbox.Group options={options} defaultValue={['0','1','2','3']} onChange={onChange} style = {{color:"#fff"}}/>
             <div className={Style.dataSource}>
                 {dataSource}
             </div>
