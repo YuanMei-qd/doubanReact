@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Main from './Main'
-import { Button,Form, Input, message } from 'antd';
+import Main from './Main';
+import CommomMain from './CommomMain';
+import { Button, Form, Input, message } from 'antd';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import moment from 'moment';
@@ -10,24 +11,29 @@ const cookies = new Cookies();
 function Login() {
     const onFinish = (value) => {
         axios({
-            method:"post",
-            url:"http://192.168.50.83:4000/login",
-            params:value
+            method: "post",
+            url: "http://192.168.50.83:4000/login",
+            params: value
         }).then(res => {
-            if(res.data.sucess){
+            console.log(res.data)
+            if (res.data.sucess) {
+                cookies.set('loginSucess', true, { expires: new Date(moment().add(6, 'h').format()), path: '/' });
+                cookies.set('nickname', res.data.nickname, { expires: new Date(moment().add(6, 'h').format()), path: '/' });
+                cookies.set('userName', res.data.userName, { expires: new Date(moment().add(6, 'h').format()), path: '/' });
                 setLoginSucess(true);
-                cookies.set('loginSucess', true, { expires: new Date(moment().add(6, 'h').format()), path: '/'});
-            } else{
+                setRoleMessage(res.data);
+            } else {
                 message.warning('密码错误');
             }
         })
     }
     const [loginSucess, setLoginSucess] = useState(false);
+    const [roleMessage, setRoleMessage] = useState({});
     useEffect(() => {
-        if(cookies.get('loginSucess') === "true"){
+        if (cookies.get('loginSucess') === "true") {
             setLoginSucess(true)
         }
-    },[])
+    }, [])
     return (
         <div className="App">
             {
@@ -57,9 +63,12 @@ function Login() {
                                 添加
                             </Button>
                         </Form.Item>
-                    </Form> : 
-                    <Main setLoginSucess = {setLoginSucess}/>
-            }            
+                    </Form> :
+                    (
+                        roleMessage.role === "Administrator" ? <Main setLoginSucess={setLoginSucess} /> : <CommomMain setLoginSucess={setLoginSucess} roleMessage = {roleMessage}/>
+                    )
+
+            }
         </div>
     );
 }
