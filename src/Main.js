@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Rate, Form, Input, Select, Checkbox } from 'antd';
-import Style from './style/Main.module.css'
-
+import Style from './style/Main.module.css';
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
@@ -20,7 +21,7 @@ const options = [
 
 const { Option } = Select;
 
-function Main() {
+function Main(props) {
     const [dataSource, setDataSource] = useState();
     // const [rateDisabled,setRateDisabled] = useState(true);
     const getAll = () => {
@@ -135,6 +136,7 @@ function Main() {
     return (
         <div className={Style.Main}>
             <Button style={{ position: "absolute", top: "30px", left: 0 }} onClick={() => { setAddData(!addData) }}>添加作品</Button>
+            <Button onClick = {() => {props.setLoginSucess(false); cookies.set('loginSucess', false)}}>退出</Button>
             <Checkbox.Group options={options} defaultValue={['0','1','2','3']} onChange={onChange} style = {{color:"#fff"}}/>
             <div className={Style.dataSource}>
                 {dataSource}
